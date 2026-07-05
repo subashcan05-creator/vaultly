@@ -801,6 +801,47 @@ export default function Dashboard() {
   const [transactions,setTransactions] = useState(INIT_TXN);
   const [goals,setGoals]               = useState(INIT_GOALS);
   const [sidebarOpen,setSidebarOpen]   = useState(false);
+  const [user,setUser]                 = useState(null);
+  const [syncStatus,setSyncStatus]     = useState("idle");
+  const [lastSynced,setLastSynced]     = useState(null);
+
+  useEffect(()=>{
+    const supabase = createClient();
+    supabase.auth.getUser().then(({data})=>setUser(data.user));
+    syncFromSheets();
+  },[]);
+
+  async function syncFromSheets() {
+    setSyncStatus("syncing");
+    try {
+      const res  = await fetch(`/api/sheets?id=11ZvQbpQTtbayEuhaRXMOGc8QzpiKq69ODVjlxg6zReA`);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      if (data.transactions?.length > 0) setTransactions(data.transactions);
+      if (data.balances?.length > 0) {
+        setAccounts(prev => prev.map(acc => {
+          const match = data.balances.find(b =>
+            b.account.toLowerCase().includes(acc.institution.toLowerCase()) ||
+            acc.nickname.toLowerCase().includes(b.account.toLowerCase())
+          );
+          return match ? { ...acc, balance: match.balance } : acc;
+        }));
+      }
+      setLastSynced(new Date());
+      setSyncStatus("success");
+      setTimeout(()=>setSyncStatus("idle"), 3000);
+    } catch(e) {
+      console.error("Sheets sync failed:", e);
+      setSyncStatus("error");
+      setTimeout(()=>setSyncStatus("idle"), 5000);
+    }
+  }
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+  }
 
   return (
     <div className="flex flex-col h-screen bg-white text-[#1B2A4A] overflow-hidden">
@@ -827,7 +868,7 @@ export default function Dashboard() {
           <div className="w-6 h-6 rounded-md bg-[#1B2A4A] flex items-center justify-center">
             <span className="num text-[#C98A2C] font-bold text-xs">N</span>
           </div>
-          <span className="font-bold text-sm">Northledger</span>
+          <span className="font-bold text-sm">Vaultly</span>
         </div>
       </div>
 

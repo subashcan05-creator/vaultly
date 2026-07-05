@@ -1,13 +1,13 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Northledger — Personal Finance",
+  title: "Vaultly — Personal Finance",
   description: "Track your RRSP, TFSA, net worth and more",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Northledger",
+    title: "Vaultly",
   },
 };
 
@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
         {/* PWA meta tags so iPad adds it to home screen properly */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Northledger" />
+        <meta name="apple-mobile-web-app-title" content="Vaultly" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body style={{ fontFamily: "'Inter', system-ui, sans-serif", margin: 0 }}>
