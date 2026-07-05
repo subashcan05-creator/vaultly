@@ -831,7 +831,6 @@ export default function Dashboard() {
       setSyncStatus("success");
       setTimeout(()=>setSyncStatus("idle"), 3000);
     } catch(e) {
-      console.error("Sheets sync failed:", e);
       setSyncStatus("error");
       setTimeout(()=>setSyncStatus("idle"), 5000);
     }
