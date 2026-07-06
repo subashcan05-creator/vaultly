@@ -814,10 +814,12 @@ export default function Dashboard() {
   async function syncFromSheets() {
     setSyncStatus("syncing");
     try {
-      const res  = await fetch(`/api/sheets?id=11ZvQbpQTtbayEuhaRXMOGc8QzpiKq69ODVjlxg6zReA`);
+      const res = await fetch(`/api/sheets?id=11ZvQbpQTtbayEuhaRXMOGc8QzpiKq69ODVjlxg6zReA&t=${Date.now()}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      if (data.transactions?.length > 0) setTransactions(data.transactions);
+      if (data.transactions?.length > 0) {
+        setTransactions([...data.transactions]);
+      }
       if (data.balances?.length > 0) {
         setAccounts(prev => prev.map(acc => {
           const match = data.balances.find(b =>
@@ -831,6 +833,7 @@ export default function Dashboard() {
       setSyncStatus("success");
       setTimeout(()=>setSyncStatus("idle"), 3000);
     } catch(e) {
+      console.error("Sync error:", e);
       setSyncStatus("error");
       setTimeout(()=>setSyncStatus("idle"), 5000);
     }
