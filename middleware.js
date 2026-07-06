@@ -1,7 +1,3 @@
-// middleware.js
-// Runs on every request. Refreshes the auth session and redirects
-// unauthenticated users away from protected pages.
-
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
@@ -27,20 +23,14 @@ export async function middleware(request) {
     }
   );
 
-  // Refresh session
   const { data: { user } } = await supabase.auth.getUser();
-
   const { pathname } = request.nextUrl;
-  const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/signup");
+  const isAuthPage = pathname.startsWith("/login") || 
+                     pathname.startsWith("/signup") || 
+                     pathname.startsWith("/auth");
 
-  // If not logged in and trying to access a protected page → redirect to login
   if (!user && !isAuthPage) {
     return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  // If logged in and trying to access login/signup → redirect to dashboard
-  if (user && isAuthPage) {
-    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return supabaseResponse;
