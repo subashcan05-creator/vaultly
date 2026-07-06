@@ -32,7 +32,7 @@ export default function LoginPage() {
   async function handleGoogle() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${location.origin}/auth/callback` },
+      options: { redirectTo: `https://vaultly-djss.vercel.app/auth/callback` },
     });
   }
 
